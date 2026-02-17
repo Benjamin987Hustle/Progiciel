@@ -162,6 +162,42 @@ with tab_sales:
                 .background_gradient(subset=['MARGIN_PCT'], cmap='Greens'),
                 use_container_width=True
             )
+
+            st.divider()
+            
+            # --- TOP PRODUITS VENDEURS ---
+            col_top1, col_top2 = st.columns(2)
+            with col_top1:
+                st.subheader("🏆 Top 5 Produits (Ventes €)")
+                top_sales = df_display.sort_values('NET_VALUE', ascending=False).head(5)
+                fig_top = px.bar(
+                    top_sales, 
+                    x='NET_VALUE', 
+                    y='MATERIAL_NUMBER', 
+                    orientation='h',
+                    text='NET_VALUE',
+                    title="Top 5 Chiffre d'Affaires",
+                    color='NET_VALUE',
+                    color_continuous_scale='Viridis'
+                )
+                fig_top.update_layout(yaxis={'categoryorder':'total ascending'})
+                st.plotly_chart(fig_top, use_container_width=True)
+
+            with col_top2:
+                 st.subheader("💎 Top 5 Produits (Marge €)")
+                 top_profit = df_display.sort_values('PROFIT', ascending=False).head(5)
+                 fig_profit = px.bar(
+                    top_profit, 
+                    x='PROFIT', 
+                    y='MATERIAL_NUMBER', 
+                    orientation='h',
+                    text='PROFIT',
+                    title="Top 5 Profitabilité",
+                    color='PROFIT',
+                    color_continuous_scale='Greens'
+                )
+                 fig_profit.update_layout(yaxis={'categoryorder':'total ascending'})
+                 st.plotly_chart(fig_profit, use_container_width=True)
             
     # --- 2. Analyse Détaillée (Région & Magasins) ---
     st.subheader("📊 Analyse Détaillée : Marges & Prix")

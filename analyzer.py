@@ -235,25 +235,30 @@ class ERPSimAnalyzer:
             market_df['NET_VALUE'] = pd.to_numeric(market_df['PRICE'], errors='coerce') * pd.to_numeric(market_df['QUANTITY'], errors='coerce')
         
         # Validation des colonnes (Nettoyage des noms)
-        # On renomme d'abord pour être sûr
-        market_df = market_df.rename(columns=lambda x: x.strip())
-        
-        logger.info(f"Market Columns: {market_df.columns.tolist()}")
-        
-        if 'MATERIAL_NUMBER' not in market_df.columns:
-            logger.warning("MATERIAL_NUMBER manquant dans Market Data")
-            return pd.DataFrame()
-            
-        if 'NET_VALUE' not in market_df.columns:
-            logger.warning("NET_VALUE manquant dans Market Data")
-            return pd.DataFrame()
-        
         try:
+            # Force les noms de colonnes en string et nettoie
+            market_df.columns = [str(c).strip() for c in market_df.columns]
+            
+            logger.info(f"Market Columns cleaned: {market_df.columns.tolist()}")
+            
+            if 'MATERIAL_NUMBER' not in market_df.columns:
+                logger.warning(f"MATERIAL_NUMBER manquant. Colonnes dispos: {market_df.columns.tolist()}")
+                return pd.DataFrame()
+            
+            if 'NET_VALUE' not in market_df.columns:
+                 # Tentative de récupération alternative
+                 if 'PRICE' in market_df.columns and 'QUANTITY' in market_df.columns:
+                     market_df['NET_VALUE'] = pd.to_numeric(market_df['PRICE'], errors='coerce') * pd.to_numeric(market_df['QUANTITY'], errors='coerce')
+                 else:
+                    logger.warning(f"NET_VALUE manquant. Colonnes dispos: {market_df.columns.tolist()}")
+                    return pd.DataFrame()
+
             # Agrégation Marché par produit
             market_summary = market_df.groupby('MATERIAL_NUMBER')['NET_VALUE'].sum().reset_index()
             market_summary.rename(columns={'NET_VALUE': 'MARKET_VALUE'}, inplace=True)
+            
         except Exception as e:
-            logger.error(f"Erreur GroupBy Market: {e}")
+            logger.error(f"Erreur critique dans get_market_analysis: {e}")
             return pd.DataFrame()
         
         # 3. Fusionner avec nos ventes
