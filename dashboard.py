@@ -44,7 +44,7 @@ st.markdown("""
 
 # --- Initialisation ---
 @st.cache_resource
-def get_analyzer(): return ERPSimAnalyzer()
+def get_erpsim_analyzer(): return ERPSimAnalyzer()
 
 @st.cache_resource
 def get_engines(_analyzer):
@@ -55,7 +55,7 @@ def get_engines(_analyzer):
     }
 
 try:
-    analyzer = get_analyzer()
+    analyzer = get_erpsim_analyzer()
     engines = get_engines(analyzer)
 except Exception as e:
     st.error(f"Erreur connexion: {e}")
