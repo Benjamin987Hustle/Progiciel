@@ -103,6 +103,21 @@ with st.sidebar:
 
     st.info("💡 **Conseil du jour:** Rembourser la dette est souvent l'action la plus rentable pour la valorisation.")
 
+    # --- DEBUG SECTION ---
+    with st.expander("🛠️ Debug Info (Si données vides)"):
+        st.write("Active Products:", len(active_products))
+        st.write("Connection URL:", settings.ODATA_BASE_URL)
+        
+        if st.button("Test Raw Data"):
+            raw_sales = analyzer.get_sales_summary()
+            st.write("Sales Shape:", raw_sales.shape)
+            st.dataframe(raw_sales.head())
+            
+            raw_market = analyzer.get_market_analysis()
+            st.write("Market Shape:", raw_market.shape)
+            st.dataframe(raw_market.head())
+
+
 # --- Header KPIs ---
 st.title(f"🚀 ERPsim Strategy - {settings.COMPANY_CODE}")
 
