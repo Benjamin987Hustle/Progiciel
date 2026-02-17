@@ -157,7 +157,7 @@ with tab_sales:
 
             # Affichage Table Principale
             st.dataframe(
-                df_display[['MATERIAL_DESCRIPTION', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'Conseil Prix']]
+                df_display[['MATERIAL_NUMBER', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'Conseil Prix']]
                 .style.format({'NET_VALUE': '€{:,.0f}', 'PROFIT': '€{:,.0f}', 'MARGIN_PCT': '{:.1f}%'})
                 .background_gradient(subset=['MARGIN_PCT'], cmap='Greens'),
                 use_container_width=True
@@ -176,7 +176,8 @@ with tab_sales:
                 sales_geo = sales_geo[sales_geo['MATERIAL_NUMBER'].isin(active_products)]
             
             # Formatage pour affichage
-            display_geo = sales_geo[['MATERIAL_DESCRIPTION', 'AREA', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'AVG_PRICE', 'QUANTITY']].copy()
+            # Formatage pour affichage
+            display_geo = sales_geo[['MATERIAL_NUMBER', 'AREA', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'AVG_PRICE', 'QUANTITY']].copy()
             
             st.dataframe(
                 display_geo.style
@@ -202,7 +203,7 @@ with tab_sales:
             if active_products:
                 sales_dc = sales_dc[sales_dc['MATERIAL_NUMBER'].isin(active_products)]
                 
-            display_dc = sales_dc[['MATERIAL_DESCRIPTION', 'DISTRIBUTION_CHANNEL', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'AVG_PRICE', 'QUANTITY']].copy()
+            display_dc = sales_dc[['MATERIAL_NUMBER', 'DISTRIBUTION_CHANNEL', 'NET_VALUE', 'PROFIT', 'MARGIN_PCT', 'AVG_PRICE', 'QUANTITY']].copy()
             
             st.dataframe(
                 display_dc.style
@@ -276,7 +277,7 @@ with tab_inventory:
                 
             # Table détaillée
             st.dataframe(
-                df_finished[['MATERIAL_DESCRIPTION', 'STOCK', 'RESTRICTED']]
+                df_finished[['MATERIAL_NUMBER', 'STOCK', 'RESTRICTED']]
                 .style.bar(subset=['STOCK'], color='#5fba7d'),
                 use_container_width=True
             )
@@ -315,7 +316,7 @@ with tab_market:
             y='MARKET_SHARE',
             size='MARKET_VALUE',
             color='STATUS',
-            hover_name='MATERIAL_DESCRIPTION',
+            hover_name='MATERIAL_NUMBER',
             text='MATERIAL_NUMBER',
             title="Matrice Opportunités : Taille Marché vs Part de Marché",
             color_discrete_map={
@@ -333,7 +334,7 @@ with tab_market:
         
         st.markdown("### 📋 Détail par Produit")
         st.dataframe(
-            market_analysis[['MATERIAL_DESCRIPTION', 'MARKET_VALUE', 'MY_VALUE', 'MARKET_SHARE', 'STATUS']]
+            market_analysis[['MATERIAL_NUMBER', 'MARKET_VALUE', 'MY_VALUE', 'MARKET_SHARE', 'STATUS']]
             .style
             .format({'MARKET_VALUE': '€{:,.0f}', 'MY_VALUE': '€{:,.0f}', 'MARKET_SHARE': '{:.1f}%'})
             .background_gradient(subset=['MARKET_SHARE'], cmap='Greens')
