@@ -235,7 +235,8 @@ class ERPSimAnalyzer:
             market_df['NET_VALUE'] = pd.to_numeric(market_df['PRICE'], errors='coerce') * pd.to_numeric(market_df['QUANTITY'], errors='coerce')
         
         # Validation des colonnes (Nettoyage des noms)
-        market_df.columns = [c.strip() for c in market_df.columns]
+        # On renomme d'abord pour être sûr
+        market_df = market_df.rename(columns=lambda x: x.strip())
         
         logger.info(f"Market Columns: {market_df.columns.tolist()}")
         
