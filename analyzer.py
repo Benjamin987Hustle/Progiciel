@@ -234,6 +234,10 @@ class ERPSimAnalyzer:
         elif 'PRICE' in market_df.columns and 'QUANTITY' in market_df.columns:
             market_df['NET_VALUE'] = pd.to_numeric(market_df['PRICE'], errors='coerce') * pd.to_numeric(market_df['QUANTITY'], errors='coerce')
         
+        # Validation des colonnes
+        if 'MATERIAL_NUMBER' not in market_df.columns or 'NET_VALUE' not in market_df.columns:
+            return pd.DataFrame()
+        
         # Agrégation Marché par produit
         market_summary = market_df.groupby('MATERIAL_NUMBER')['NET_VALUE'].sum().reset_index()
         market_summary.rename(columns={'NET_VALUE': 'MARKET_VALUE'}, inplace=True)
