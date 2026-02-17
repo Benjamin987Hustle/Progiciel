@@ -234,13 +234,26 @@ class ERPSimAnalyzer:
         elif 'PRICE' in market_df.columns and 'QUANTITY' in market_df.columns:
             market_df['NET_VALUE'] = pd.to_numeric(market_df['PRICE'], errors='coerce') * pd.to_numeric(market_df['QUANTITY'], errors='coerce')
         
-        # Validation des colonnes
-        if 'MATERIAL_NUMBER' not in market_df.columns or 'NET_VALUE' not in market_df.columns:
+        # Validation des colonnes (Nettoyage des noms)
+        market_df.columns = [c.strip() for c in market_df.columns]
+        
+        logger.info(f"Market Columns: {market_df.columns.tolist()}")
+        
+        if 'MATERIAL_NUMBER' not in market_df.columns:
+            logger.warning("MATERIAL_NUMBER manquant dans Market Data")
+            return pd.DataFrame()
+            
+        if 'NET_VALUE' not in market_df.columns:
+            logger.warning("NET_VALUE manquant dans Market Data")
             return pd.DataFrame()
         
-        # Agrégation Marché par produit
-        market_summary = market_df.groupby('MATERIAL_NUMBER')['NET_VALUE'].sum().reset_index()
-        market_summary.rename(columns={'NET_VALUE': 'MARKET_VALUE'}, inplace=True)
+        try:
+            # Agrégation Marché par produit
+            market_summary = market_df.groupby('MATERIAL_NUMBER')['NET_VALUE'].sum().reset_index()
+            market_summary.rename(columns={'NET_VALUE': 'MARKET_VALUE'}, inplace=True)
+        except Exception as e:
+            logger.error(f"Erreur GroupBy Market: {e}")
+            return pd.DataFrame()
         
         # 3. Fusionner avec nos ventes
         # On utilise company_sales qui est déjà agrégé par produit
